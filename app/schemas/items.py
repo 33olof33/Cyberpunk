@@ -6,14 +6,15 @@ class ItemCreate(BaseModel):
     category: str
     quantity: str
     price: float
+    owner_id: int
 
 
 class ItemUpdate(BaseModel):
-    name: str
-    description: str
-    category: str
-    quantity: str
-    price: float
+    name: str | None = None
+    description: str | None = None
+    category: str | None = None
+    quantity: str | None = None
+    price: float | None = None
 
 
 class ItemReturn(BaseModel):
@@ -23,3 +24,4 @@ class ItemReturn(BaseModel):
     category: str
     quantity: str
     price: float
+    owner_id: int
