@@ -1,19 +1,16 @@
-FROM python:3.10
+FROM python:3.11
 
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
 
-COPY ./poetry.lock ./
-COPY ./pyproject.toml ./
+COPY ./pyproject.toml ./poetry.lock ./
 
-RUN poetry lock --no-update
-RUN poetry install --no-root
+RUN pip install poetry
 
+RUN poetry install --no-root --no-dev
 
 COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["poetry", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

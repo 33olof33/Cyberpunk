@@ -1,3 +1,3 @@
-from items import ItemCRUD
+from .items import ItemCRUD
 
 item = ItemCRUD()
