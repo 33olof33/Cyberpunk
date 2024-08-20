@@ -1,14 +1,14 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from app.db.items import Item
+from app.db.users import User
+from .base import Base
 
-# from app.core.config import settings
 
 DATABASE_URL = "postgresql://postgres:admin@postgres:5432/test"
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 
 def get_db():
@@ -17,3 +17,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+Base.metadata.drop_all(bind=engine)
+
+Base.metadata.create_all(bind=engine)

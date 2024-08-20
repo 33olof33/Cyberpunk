@@ -2,8 +2,8 @@ from app import db, schemas, crud
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
-from fastapi_pagination import Page, add_pagination, paginate
-
+from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 router = APIRouter()
 
@@ -16,7 +16,7 @@ async def get_by_id(
     return crud.item.get(db=db, id=item_id)
 
 
-@router.get("/all")
+@router.get("/")
 async def get_all_items(
     db: Session = Depends(get_db),
 ) -> Page[schemas.ItemReturn]:
@@ -42,7 +42,7 @@ async def update_item_info(
 
 
 @router.delete("/{item_id}")
-async def get_order_history(
+async def delete_item(
     item_id: int,
     db: Session = Depends(get_db),
 ) -> None:
