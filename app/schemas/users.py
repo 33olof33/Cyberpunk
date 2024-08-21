@@ -1,16 +1,19 @@
-from lib2to3.pytree import Base
 from pydantic import BaseModel, EmailStr
 
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    hashed_pass: str
 
 
 class UserUpdate(BaseModel):
-    password: str
+    hashed_pass: str
 
 
 class UserReturn(BaseModel):
     id: int
     email: str
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
