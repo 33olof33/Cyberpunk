@@ -12,5 +12,7 @@ class Item(Base):
     category = Column(String)
     quantity = Column(Integer)
     price = Column(Float)
-    # owner_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    # owner = relationship("users", foreign_keys=[owner_id])
+    owner_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    owner = relationship("users", foreign_keys=[owner_id])

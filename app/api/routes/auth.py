@@ -4,8 +4,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from app.schemas.auth import Token
 from app.crud import users as crud
-from app.core.auth import create_access_token
-from app.db.deps import get_db
+from app.api.deps import create_access_token
+from app.api.deps import get_db
+from crud.auth import authenticate_user
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ router = APIRouter()
 def login_for_access_token(
     db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-    user = crud.authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

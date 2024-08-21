@@ -2,8 +2,7 @@ from app import db, schemas, crud
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
-from fastapi_pagination import Page, add_pagination
-from fastapi_pagination.ext.sqlalchemy import paginate
+from app.api.deps import get_current_user
 
 router = APIRouter()
 
@@ -37,13 +36,15 @@ async def update_user_info(
     user_id: int,
     data: schemas.UserUpdate,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.UserReturn:
-    return crud.user.update(db=db, data=data, id=user_id)
+    return crud.user.update(db=db, owner_id=current_user.id, data=data, id=user_id)
 
 
 @router.delete("/{user_id}")
 async def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> None:
-    return crud.user.delete(db=db, id=user_id)
+    return crud.user.delete(db=db, owner_id=current_user.id, id=user_id)

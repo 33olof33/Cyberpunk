@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
+from app.api.deps import get_current_user
 
 router = APIRouter()
 
@@ -12,15 +13,17 @@ router = APIRouter()
 async def get_by_id(
     item_id: int,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.get(db=db, id=item_id)
+    return crud.item.get(db=db, owner_id=current_user.id, id=item_id)
 
 
 @router.get("/")
 async def get_all_items(
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> Page[schemas.ItemReturn]:
-    query = crud.item.get_multi(db=db)
+    query = crud.item.get_multi(db=db, owner_id=current_user.id)
     return paginate(query)
 
 
@@ -28,8 +31,9 @@ async def get_all_items(
 async def create_item(
     data: schemas.ItemCreate,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.create(db=db, data=data)
+    return crud.item.create(db=db, owner_id=current_user.id, data=data)
 
 
 @router.patch("/{item_id}")
@@ -37,13 +41,15 @@ async def update_item_info(
     item_id: int,
     data: schemas.ItemUpdate,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.update(db=db, data=data, id=item_id)
+    return crud.item.update(db=db, owner_id=current_user.id, data=data, id=item_id)
 
 
 @router.delete("/{item_id}")
 async def delete_item(
     item_id: int,
     db: Session = Depends(get_db),
+    current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> None:
-    return crud.item.delete(db=db, id=item_id)
+    return crud.item.delete(db=db, owner_id=current_user.id, id=item_id)
