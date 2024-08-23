@@ -7,9 +7,12 @@ from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from app.db import users
+from passlib.context import CryptContext
 
 
 from app.db.users import User
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserCRUD(BaseCRUD[schemas.UserCreate, schemas.UserUpdate, schemas.UserReturn]):
@@ -27,6 +30,7 @@ class UserCRUD(BaseCRUD[schemas.UserCreate, schemas.UserUpdate, schemas.UserRetu
     def create(
         self, db: Optional[Session], *, data: schemas.UserCreate
     ) -> schemas.UserReturn:
+        data.hashed_pass = pwd_context.hash(data.hashed_pass)
         db_obj = User(**data.dict())
         db.add(db_obj)
         try:

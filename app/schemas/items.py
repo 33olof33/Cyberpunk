@@ -7,7 +7,7 @@ class ItemCreate(BaseModel):
     category: str
     quantity: int
     price: float
-    # owner_id: int
+    owner_id: int
 
 
 class ItemUpdate(BaseModel):
@@ -25,4 +25,4 @@ class ItemReturn(BaseModel):
     category: str
     quantity: int
     price: float
-    # owner_id: int
+    owner_id: int

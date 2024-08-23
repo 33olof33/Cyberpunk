@@ -15,7 +15,7 @@ async def get_by_id(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.get(db=db, owner_id=current_user.id, id=item_id)
+    return crud.item.get(db=db, id=item_id, owner_id=current_user.id)
 
 
 @router.get("/")
@@ -33,7 +33,8 @@ async def create_item(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.create(db=db, owner_id=current_user.id, data=data)
+    data_extended = schemas.ItemCreate(**data.dict(), owner_id=current_user.id)
+    return crud.item.create(db=db, data=data_extended)
 
 
 @router.patch("/{item_id}")
@@ -43,7 +44,7 @@ async def update_item_info(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    return crud.item.update(db=db, owner_id=current_user.id, data=data, id=item_id)
+    return crud.item.update(db=db, id=item_id, owner_id=current_user.id, data=data)
 
 
 @router.delete("/{item_id}")
@@ -52,4 +53,4 @@ async def delete_item(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> None:
-    return crud.item.delete(db=db, owner_id=current_user.id, id=item_id)
+    return crud.item.delete(db=db, id=item_id, owner_id=current_user.id)

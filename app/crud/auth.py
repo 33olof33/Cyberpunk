@@ -13,14 +13,14 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+def get_user_by_username(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
 
 
-def authenticate_user(db: Session, username: str, password: str):
-    user = get_user_by_username(db, username)
+def authenticate_user(db: Session, email: str, hashed_pass: str):
+    user = get_user_by_username(db, email)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(hashed_pass, user.hashed_pass):
         return False
     return user

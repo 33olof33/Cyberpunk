@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from .base import Base
+from .users import User
 
 
 class Item(Base):
@@ -15,4 +16,4 @@ class Item(Base):
     owner_id = Column(
         Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    owner = relationship("users", foreign_keys=[owner_id])
+    owner = relationship("User", foreign_keys=[owner_id])
