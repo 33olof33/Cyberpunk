@@ -23,7 +23,7 @@ async def get_all_items(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> Page[schemas.ItemReturn]:
-    query = crud.item.get_multi(db=db, owner_id=current_user.id)
+    query = crud.item.get_multi_by_owner(db=db, owner_id=current_user.id)
     return paginate(query)
 
 
@@ -33,7 +33,7 @@ async def create_item(
     db: Session = Depends(get_db),
     current_user: schemas.UserReturn = Depends(get_current_user),
 ) -> schemas.ItemReturn:
-    data_extended = schemas.ItemCreate(**data.dict(), owner_id=current_user.id)
+    data_extended = schemas.ItemCreateExtended(**data.dict(), owner_id=current_user.id)
     return crud.item.create(db=db, data=data_extended)
 
 

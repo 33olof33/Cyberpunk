@@ -11,11 +11,13 @@ from sqlalchemy.exc import IntegrityError
 from app.db.items import Item
 
 
-class ItemCRUD(BaseCRUD[schemas.ItemCreate, schemas.ItemUpdate, schemas.ItemReturn]):
+class ItemCRUD(
+    BaseCRUD[schemas.ItemCreateExtended, schemas.ItemUpdate, schemas.ItemReturn]
+):
     def get(
         self, db: Optional[Session], *, id: int, owner_id: int
     ) -> Optional[schemas.ItemReturn]:
-        item = db.query(Item).filter(Item.owner_id == owner_id, Item.id == id)
+        item = db.query(Item).filter(Item.id == id, Item.owner_id == owner_id).first()
         if item is None:
             raise HTTPException(status_code=404, detail="Item not found")
         item_data = jsonable_encoder(item)
@@ -28,11 +30,11 @@ class ItemCRUD(BaseCRUD[schemas.ItemCreate, schemas.ItemUpdate, schemas.ItemRetu
     def get_multi_by_owner(
         self, db: Optional[Session], *, owner_id: int
     ) -> list[schemas.ItemReturn]:
-        items = db.query(Item).filter(Item.owner_id == owner_id).all()
+        items = db.query(Item).filter(Item.owner_id == owner_id)
         return items
 
     def create(
-        self, db: Optional[Session], *, data: schemas.ItemCreate
+        self, db: Optional[Session], *, data: schemas.ItemCreateExtended
     ) -> schemas.ItemReturn:
         form = jsonable_encoder(data)
         db_obj = Item(**form)
@@ -48,7 +50,7 @@ class ItemCRUD(BaseCRUD[schemas.ItemCreate, schemas.ItemUpdate, schemas.ItemRetu
             )
 
     def update(
-        self, db: Optional[Session], *, id: int, owner_id: int, data: schemas.ItemUpdate
+        self, db: Optional[Session], *, id: int, data: schemas.ItemUpdate, owner_id: int
     ) -> None:
         item = db.query(Item).filter(Item.id == id, Item.owner_id == owner_id).first()
 
@@ -68,3 +70,4 @@ class ItemCRUD(BaseCRUD[schemas.ItemCreate, schemas.ItemUpdate, schemas.ItemRetu
             raise HTTPException(status_code=404, detail="Item not found")
         db.delete(item)
         db.commit()
+        return schemas.Message("Item was deleted")

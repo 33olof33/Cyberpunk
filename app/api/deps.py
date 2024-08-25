@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.schemas.auth import TokenData
 from app.crud.auth import get_user_by_username
 from app.db.__init__ import get_db
+from app import crud
 
 
 SECRET_KEY = "your_super_secret_key_that_is_hard_to_guess"
