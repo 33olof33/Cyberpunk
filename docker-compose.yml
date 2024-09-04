@@ -5,12 +5,14 @@ services:
     build: ./
     container_name: backend
     ports:
-      - "8001:8000"
+      - "8000:8000"
     restart: always
     depends_on:
       - postgres
     volumes:
       - .:/app
+    networks:
+      - mynetwork
 
   postgres:
     image: postgres:14
@@ -25,7 +27,13 @@ services:
       - POSTGRES_PORT=5432
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
 
 volumes:
   pg_data: {}
   pgadmin_data: {}
+
+networks:
+  mynetwork:
+    driver: bridge
